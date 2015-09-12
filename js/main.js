@@ -1,19 +1,26 @@
 import TodoMVC from './application';
-import {Controller, Router} from './router';
+import {Router} from './router';
+import {TodoList} from './todos';
+import {Root} from './layout'
 import Backbone from 'backbone';
 import $ from 'jquery';
+import './filter';
 
 Backbone.$ = $;
 
+
 TodoMVC.on('start', function () {
-    Backbone.history.start();
-    var controller = new Controller();
-    controller.router = new Router({
-        controller: controller
+    let todos = new TodoList();
+    todos.fetch();
+
+    TodoMVC.root = new Root({
+        collection: todos
     });
 
-    controller.start();
+    let router = new Router();
+
+    Backbone.history.start();
 });
-//
-// start the TodoMVC app (defined in js/TodoMVC.js)
+
+// start the TodoMVC app
 TodoMVC.start();

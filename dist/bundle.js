@@ -54,6 +54,10 @@
 
 	var _router = __webpack_require__(10);
 
+	var _todos = __webpack_require__(11);
+
+	var _layout = __webpack_require__(8);
+
 	var _backbone = __webpack_require__(3);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
@@ -62,19 +66,24 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
+	__webpack_require__(14);
+
 	_backbone2['default'].$ = _jquery2['default'];
 
 	_application2['default'].on('start', function () {
-	    _backbone2['default'].history.start();
-	    var controller = new _router.Controller();
-	    controller.router = new _router.Router({
-	        controller: controller
+	    var todos = new _todos.TodoList();
+	    todos.fetch();
+
+	    _application2['default'].root = new _layout.Root({
+	        collection: todos
 	    });
 
-	    controller.start();
+	    var router = new _router.Router();
+
+	    _backbone2['default'].history.start();
 	});
-	//
-	// start the TodoMVC app (defined in js/TodoMVC.js)
+
+	// start the TodoMVC app
 	_application2['default'].start();
 
 /***/ },
@@ -84,7 +93,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	    value: true
+	  value: true
 	});
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -93,30 +102,13 @@
 
 	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
 
-	var _layout = __webpack_require__(8);
-
-	var _backboneRadio = __webpack_require__(9);
-
-	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
-
-	var filterChannel = _backboneRadio2['default'].channel('filter');
-
 	// TodoMVC is global for developing in the console
 	// and functional testing.
-	var App = _backboneMarionette2['default'].Application.extend({});
 
-	var TodoMVC = new App();
+	var TodoMVC = new _backboneMarionette2['default'].Application();
+
 	exports['default'] = TodoMVC;
-	var RootLayout = new _layout.Root();
-
-	exports.RootLayout = RootLayout;
-	var filterState = new Backbone.Model({
-	    filter: 'all'
-	});
-
-	filterChannel.reply('filterState', function () {
-	    return filterState;
-	});
+	module.exports = exports['default'];
 
 /***/ },
 /* 2 */
@@ -18086,122 +18078,47 @@
 
 	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
 
+	var _views = __webpack_require__(13);
+
 	var filterChannel = _backboneRadio2['default'].channel('filter');
 
 	var Root = _backboneMarionette2['default'].LayoutView.extend({
+
 	    el: '#todoapp',
+
 	    regions: {
 	        header: '#header',
 	        main: '#main',
 	        footer: '#footer'
-	    }
-	});
-
-	exports.Root = Root;
-	// Layout Header View
-	// ------------------
-	//
-	var Header = _backboneMarionette2['default'].ItemView.extend({
-	    template: '#template-header',
-
-	    // UI bindings create cached attributes that
-	    // point to jQuery selected objects
-	    ui: {
-	        input: '#new-todo'
-	    },
-
-	    events: {
-	        'keypress @ui.input': 'onInputKeypress',
-	        'keyup @ui.input': 'onInputKeyup'
-	    },
-
-	    // According to the spec
-	    // If escape is pressed during the edit, the edit state should be left and any changes be discarded.
-	    onInputKeyup: function onInputKeyup(e) {
-	        var ESC_KEY = 27;
-
-	        if (e.which === ESC_KEY) {
-	            this.render();
-	        }
-	    },
-
-	    onInputKeypress: function onInputKeypress(e) {
-	        var ENTER_KEY = 13;
-	        var todoText = this.ui.input.val().trim();
-
-	        if (e.which === ENTER_KEY && todoText) {
-	            this.collection.create({
-	                title: todoText
-	            });
-	            this.ui.input.val('');
-	        }
-	    }
-	});
-
-	exports.Header = Header;
-	// Layout Footer View
-	// ------------------
-	var Footer = _backboneMarionette2['default'].ItemView.extend({
-	    template: '#template-footer',
-
-	    // UI bindings create cached attributes that
-	    // point to jQuery selected objects
-	    ui: {
-	        filters: '#filters a',
-	        completed: '.completed a',
-	        active: '.active a',
-	        all: '.all a',
-	        summary: '#todo-count',
-	        clear: '#clear-completed'
-	    },
-
-	    events: {
-	        'click @ui.clear': 'onClearClick'
-	    },
-
-	    collectionEvents: {
-	        all: 'render'
-	    },
-
-	    templateHelpers: {
-	        activeCountLabel: function activeCountLabel() {
-	            return (this.activeCount === 1 ? 'item' : 'items') + ' left';
-	        }
 	    },
 
 	    initialize: function initialize() {
-	        this.listenTo(filterChannel.request('filterState'), 'change:filter', this.updateFilterSelection, this);
+	        this.showHeader();
+	        this.showFooter();
+	        this.showTodoList();
 	    },
 
-	    serializeData: function serializeData() {
-	        var active = this.collection.getActive().length;
-	        var total = this.collection.length;
-
-	        return {
-	            activeCount: active,
-	            totalCount: total,
-	            completedCount: total - active
-	        };
-	    },
-
-	    onRender: function onRender() {
-	        this.$el.parent().toggle(this.collection.length > 0);
-	        this.updateFilterSelection();
-	    },
-
-	    updateFilterSelection: function updateFilterSelection() {
-	        this.ui.filters.removeClass('selected');
-	        this.ui[filterChannel.request('filterState').get('filter')].addClass('selected');
-	    },
-
-	    onClearClick: function onClearClick() {
-	        var completed = this.collection.getCompleted();
-	        completed.forEach(function (todo) {
-	            todo.destroy();
+	    showHeader: function showHeader() {
+	        var header = new _views.Header({
+	            collection: this.collection
 	        });
+	        this.showChildView('header', header);
+	    },
+
+	    showFooter: function showFooter() {
+	        var footer = new _views.Footer({
+	            collection: this.collection
+	        });
+	        this.showChildView('footer', footer);
+	    },
+
+	    showTodoList: function showTodoList() {
+	        this.showChildView('main', new _views.ListView({
+	            collection: this.collection
+	        }));
 	    }
 	});
-	exports.Footer = Footer;
+	exports.Root = Root;
 
 /***/ },
 /* 9 */
@@ -18556,21 +18473,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _backboneMarionette = __webpack_require__(2);
+	var _backbone = __webpack_require__(3);
 
-	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
-
-	var _jquery = __webpack_require__(5);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _application = __webpack_require__(1);
-
-	var _todos = __webpack_require__(11);
-
-	var _views = __webpack_require__(13);
-
-	var _layout = __webpack_require__(8);
+	var _backbone2 = _interopRequireDefault(_backbone);
 
 	var _backboneRadio = __webpack_require__(9);
 
@@ -18578,54 +18483,10 @@
 
 	var filterChannel = _backboneRadio2['default'].channel('filter');
 
-	var Router = _backboneMarionette2['default'].AppRouter.extend({
-	    appRoutes: {
+	var Router = _backbone2['default'].Router.extend({
+
+	    routes: {
 	        '*filter': 'filterItems'
-	    }
-	});
-
-	exports.Router = Router;
-	// TodoList Controller (Mediator)
-	// ------------------------------
-	//
-	// Control the workflow and logic that exists at the application
-	// level, above the implementation detail of views and models
-	var Controller = _backboneMarionette2['default'].Object.extend({
-	    initialize: function initialize() {
-	        this.todoList = new _todos.TodoList();
-	    },
-	    // Start the app by showing the appropriate views
-	    // and fetching the list of todo items, if there are any
-	    start: function start() {
-	        this.showHeader(this.todoList);
-	        this.showFooter(this.todoList);
-	        this.showTodoList(this.todoList);
-	        this.todoList.on('all', this.updateHiddenElements, this);
-	        this.todoList.fetch();
-	    },
-
-	    updateHiddenElements: function updateHiddenElements() {
-	        (0, _jquery2['default'])('#main, #footer').toggle(!!this.todoList.length);
-	    },
-
-	    showHeader: function showHeader(todoList) {
-	        var header = new _layout.Header({
-	            collection: todoList
-	        });
-	        _application.RootLayout.showChildView('header', header);
-	    },
-
-	    showFooter: function showFooter(todoList) {
-	        var footer = new _layout.Footer({
-	            collection: todoList
-	        });
-	        _application.RootLayout.showChildView('footer', footer);
-	    },
-
-	    showTodoList: function showTodoList(todoList) {
-	        _application.RootLayout.showChildView('main', new _views.ListView({
-	            collection: todoList
-	        }));
 	    },
 
 	    // Set the filter to show complete or all items
@@ -18634,7 +18495,7 @@
 	        filterChannel.request('filterState').set('filter', newFilter);
 	    }
 	});
-	exports.Controller = Controller;
+	exports.Router = Router;
 
 /***/ },
 /* 11 */
@@ -19013,9 +18874,12 @@
 	//
 	// Display an individual todo item, and respond to changes
 	// that are made to the item, including marking completed.
-	var ItemView = _backboneMarionette2['default'].ItemView.extend({
+	var TodoView = _backboneMarionette2['default'].ItemView.extend({
+
 	    tagName: 'li',
+
 	    template: '#template-todoItemView',
+
 	    className: function className() {
 	        return this.model.get('completed') ? 'completed' : 'active';
 	    },
@@ -19050,6 +18914,7 @@
 	    onEditClick: function onEditClick() {
 	        this.$el.addClass('editing');
 	        this.ui.edit.focus();
+	        //move cursor to the end
 	        this.ui.edit.val(this.ui.edit.val());
 	    },
 
@@ -19079,15 +18944,18 @@
 	    }
 	});
 
-	exports.ItemView = ItemView;
+	exports.TodoView = TodoView;
 	// Item List View
 	// --------------
 	//
 	// Controls the rendering of the list of items, including the
 	// filtering of activs vs completed items for display.
 	var ListView = _backbone2['default'].Marionette.CompositeView.extend({
+
 	    template: '#template-todoListCompositeView',
-	    childView: ItemView,
+
+	    childView: TodoView,
+
 	    childViewContainer: '#todo-list',
 
 	    ui: {
@@ -19130,7 +18998,252 @@
 	        });
 	    }
 	});
+
 	exports.ListView = ListView;
+	// Layout Header View
+	// ------------------
+	//
+	var Header = _backboneMarionette2['default'].ItemView.extend({
+	    template: '#template-header',
+
+	    // UI bindings create cached attributes that
+	    // point to jQuery selected objects
+	    ui: {
+	        input: '#new-todo'
+	    },
+
+	    events: {
+	        'keypress @ui.input': 'onInputKeypress',
+	        'keyup @ui.input': 'onInputKeyup'
+	    },
+
+	    // According to the spec
+	    // If escape is pressed during the edit, the edit state should be left and any changes be discarded.
+	    onInputKeyup: function onInputKeyup(e) {
+	        var ESC_KEY = 27;
+
+	        if (e.which === ESC_KEY) {
+	            this.render();
+	        }
+	    },
+
+	    onInputKeypress: function onInputKeypress(e) {
+	        var ENTER_KEY = 13;
+	        var todoText = this.ui.input.val().trim();
+
+	        if (e.which === ENTER_KEY && todoText) {
+	            this.collection.create({
+	                title: todoText
+	            });
+	            this.ui.input.val('');
+	        }
+	    }
+	});
+
+	exports.Header = Header;
+	// Layout Footer View
+	// ------------------
+	var Footer = _backboneMarionette2['default'].ItemView.extend({
+	    template: '#template-footer',
+
+	    // UI bindings create cached attributes that
+	    // point to jQuery selected objects
+	    ui: {
+	        filters: '#filters a',
+	        completed: '.completed a',
+	        active: '.active a',
+	        all: '.all a',
+	        summary: '#todo-count',
+	        clear: '#clear-completed'
+	    },
+
+	    events: {
+	        'click @ui.clear': 'onClearClick'
+	    },
+
+	    collectionEvents: {
+	        all: 'render'
+	    },
+
+	    templateHelpers: function templateHelpers() {
+	        var active = this.collection.getActive().length;
+	        var total = this.collection.length;
+	        return {
+	            activeCountLabel: function activeCountLabel() {
+	                return (this.activeCount === 1 ? 'item' : 'items') + ' left';
+	            },
+	            activeCount: active,
+	            totalCount: total,
+	            completedCount: total - active
+	        };
+	    },
+
+	    initialize: function initialize() {
+	        this.listenTo(filterChannel.request('filterState'), 'change:filter', this.updateFilterSelection, this);
+	    },
+
+	    onRender: function onRender() {
+	        this.$el.parent().toggle(this.collection.length > 0);
+	        this.updateFilterSelection();
+	    },
+
+	    updateFilterSelection: function updateFilterSelection() {
+	        this.ui.filters.removeClass('selected');
+	        this.ui[filterChannel.request('filterState').get('filter')].addClass('selected');
+	    },
+
+	    onClearClick: function onClearClick() {
+	        var completed = this.collection.getCompleted();
+	        completed.forEach(function (todo) {
+	            todo.destroy();
+	        });
+	    }
+	});
+	exports.Footer = Footer;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _marionetteService = __webpack_require__(15);
+
+	var _marionetteService2 = _interopRequireDefault(_marionetteService);
+
+	var _backbone = __webpack_require__(3);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	/* 
+	 * This is a simple service that maintains the 
+	 * state of the filter, and passes it on
+	 * to any other parts of the code that request it
+	 * This currently uses Marionette-service for its service
+	 * object, in Mn 3.0 this will be replaceable with
+	 * Marionette.Object without any external dependencies
+	 */
+	var FilterService = _marionetteService2['default'].extend({
+
+	    radioRequests: {
+	        'filter filterState': 'getFilterState'
+	    },
+
+	    initialize: function initialize() {
+	        this.filterState = new _backbone2['default'].Model({
+	            filter: 'all'
+	        });
+	    },
+
+	    getFilterState: function getFilterState() {
+	        return this.filterState;
+	    }
+
+	});
+
+	// We create the service as a singleton
+	var service = new FilterService();
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Marionette Service
+	 *
+	 * Adds a Service Object to Marionette which allows an Object to
+	 * receive Backbone.Radio messages in a declarative fashion.
+	 *
+	 * @author Ben McCormick
+	 *
+	 */
+	/* global define:false, require:false, module:false */
+	(function(global, factory) {
+	  'use strict';
+	  if(true) {
+	    module.exports = factory(__webpack_require__(2), __webpack_require__(9), __webpack_require__(4)); //jshint ignore:line
+	  } else if(typeof define === 'function' && define.amd) {
+	   define(['backbone.marionette', 'backbone.radio', 'underscore'], factory);
+	  } else {
+	   factory(global.Marionette, global.Backbone.Radio, global._);
+	  }
+	})(this, function (Mn, Radio, _) {
+	  //Proxy Radio message handling to enable declarative interactions with radio channels
+	  var radioAPI = {
+	      radioEvents : {
+	          startMethod: 'on',
+	          stopMethod: 'off'
+	      },
+
+	      radioRequests : {
+	          startMethod: 'reply',
+	          stopMethod: 'stopReplying'
+	      }
+	  };
+
+	  function proxyRadioHandlers() {
+	      unproxyRadioHandlers.apply(this);
+	      _.each(radioAPI, function(commands, radioType) {
+	          var hash = _.result(this, radioType);
+	          if (!hash) {
+	              return;
+	          }
+	          _.each(hash, function(handler, radioMessage) {
+	              handler = normalizeHandler.call(this, handler);
+	              if (!handler) {
+	                return;
+	              }
+	              var messageComponents = radioMessage.split(' '),
+	                channel = messageComponents[0],
+	                messageName = messageComponents[1];
+	              proxyRadioHandler.call(this,channel, radioType, messageName, handler);
+	          }, this);
+	      }, this);
+	  }
+
+	  function proxyRadioHandler(channel, radioType, messageName, handler) {
+	      var method = radioAPI[radioType].startMethod;
+	      this._radioChannels = this._radioChannels || [];
+	      if(!_.contains(this._radioChannels, channel)) {
+	          this._radioChannels.push(channel);
+	      }
+	      Radio[method](channel, messageName, handler, this);
+	  }
+
+	  function unproxyRadioHandlers() {
+	      _.each(this._radioChannels, function(channel) {
+	          _.each(radioAPI,function(commands) {
+	              Radio[commands.stopMethod](channel, null, null, this);
+	          }, this);
+	      }, this);
+	  }
+
+	  function normalizeHandler(handler) {
+	      if (!_.isFunction(handler)) {
+	          handler = this[handler];
+	      }
+	      return handler;
+	  }
+
+	  var Service = Mn.Object.extend({
+
+	      constructor: function() {
+	          Mn.Object.apply(this, [].slice.call(arguments));
+	          proxyRadioHandlers.apply(this);
+	      },
+
+	      destroy: function() {
+	          Mn.Object.prototype.destroy.apply(this);
+	          unproxyRadioHandlers.apply(this);
+	      }
+
+	  });
+	  Mn.Service = Service;
+	  return Service;
+	});
+
 
 /***/ }
 /******/ ]);
