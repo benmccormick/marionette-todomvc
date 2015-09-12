@@ -1,35 +1,15 @@
-# Backbone.Marionette TodoMVC Example
+# Backbone.Marionette ES6 TodoMVC Example
 
-> Backbone.Marionette is a composite application library for Backbone.js that aims to simplify the construction of large scale JavaScript applications.
+This is an implementation of the [TodoMVC app](http://todomvc.com/) using Marionette and ES6 concepts.  It is not the official TodoMVC implementation for Marionette since it uses modules and other things that are outside of the scope of what TodoMVC attempts to show.  But it is useful for learning what a modern Marionette application might look like.
 
-> _[Backbone.Marionette - marionettejs.com](http://marionettejs.com)_
+**Libraries used**
+-----------------
 
-
-## Learning Backbone.Marionette
-
-The [Backbone.Marionette website](http://marionettejs.com) is a great resource for getting started.
-
-Here are some links you may find helpful:
-
-* [API Reference](https://github.com/marionettejs/backbone.marionette/tree/master/docs)
-* [Applications built with Backbone.Marionette](https://github.com/marionettejs/backbone.marionette/wiki/Projects-and-websites-using-marionette)
-* [Introduction to Composite JavaScript Apps](https://github.com/marionettejs/backbone.marionette/wiki/Introduction-to-composite-javascript-apps)
-* [FAQ](https://github.com/marionettejs/backbone.marionette/wiki#frequently-asked-questions)
-* [Backbone.Marionette on GitHub](https://github.com/marionettejs/backbone.marionette)
-
-Articles and guides from the community:
-
-* [A Thorough Introduction to Backbone.Marionette](http://coding.smashingmagazine.com/2013/02/11/introduction-backbone-marionette)
-* [Backbone Marionette: Better Backbone Apps](http://www.joezimjs.com/javascript/backbone-marionette-better-backbone-apps)
-
-Get help from other Backbone.Marionette users:
-
-* [Backbone.Marionette on StackOverflow](http://stackoverflow.com/questions/tagged/backbone.marionette)
-* [Backbone.Marionette on Twitter](http://twitter.com/marionettejs)
-
-_If you have other helpful links to share, or find any of the links above no longer work, please [let us know](https://github.com/tastejs/todomvc/issues)._
-
-
-## Implementation
-
-This implementation of the application uses Marionette's module system. Variations using RequireJS and a more classic approach to JavaScript modules [are also available here](https://github.com/marionettejs/backbone.marionette/wiki/Projects-and-websites-using-marionette).
+- [Marionette](http://marionettejs.com/) is the primary library used to structure the application
+- [Backbone.js](http://backbonejs.org/) is a dependency of Marionette
+- [jQuery](http://jquery.com) is soft dependency of Marionette
+- [Underscore](http://underscorejs.org/) is a hard dependency of Marionette
+- [Backbone.Radio](https://github.com/marionettejs/backbone.radio) is a messaging system used with Marionette
+- [Marionette-service](https://github.com/benmccormick/marionette-service) is a shim for the Marionette-Backbone.radio integration that will be present in Marionette 3.0.0
+- [Webpack](https://webpack.github.io/) is a loader for writing modular front end code
+- [Babel](https://babeljs.io/) is a transpiler that allows writing ES6 code that can run in current browsers
