@@ -13,3 +13,22 @@ This is an implementation of the [TodoMVC app](http://todomvc.com/) using Marion
 - [Marionette-service](https://github.com/benmccormick/marionette-service) is a shim for the Marionette-Backbone.radio integration that will be present in Marionette 3.0.0
 - [Webpack](https://webpack.github.io/) is a loader for writing modular front end code
 - [Babel](https://babeljs.io/) is a transpiler that allows writing ES6 code that can run in current browsers
+
+** Getting started with this repo **
+------------------------------------
+
+To pull in your updates and run the app locally, run the following from the root of this repository
+
+```
+# install webpack
+npm install -g webpack
+# install local dependencies (you can skip this if not editing the code)
+npm install
+# run webpack (you can skip this if not editing the code) to build code
+webpack
+# run a local webserver (does not have to be python)
+python -m SimpleHTTPServer 8000
+```
+
+The app will then be available at `http://localhost:8000`
+
