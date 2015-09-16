@@ -9,7 +9,8 @@
     "marionette-service": "0.0.7",
     "todomvc-app-css": "^1.0.1",
     "todomvc-common": "^1.0.1",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "backbone-decorators": "^0.0.3"
   },
   "devDependencies": {
     "babel-core": "^5.8.24",

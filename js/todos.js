@@ -1,32 +1,31 @@
 import Backbone from 'backbone';
 import LocalStorage from 'backbone.localstorage';
+import {defaults, model, comparator, localStorage} from 'backbone-decorators';
 
-Backbone.LocalStorage = LocalStorage;
+// Todo Model
+// ----------
+@defaults({
+    title: '',
+    completed: false,
+    created: 0
+})
+export class Todo extends Backbone.Model {
 
-	// Todo Model
-	// ----------
-export const Todo = Backbone.Model.extend({
-    defaults: {
-        title: '',
-        completed: false,
-        created: 0
-    },
-
-    initialize: function () {
+    initialize() {
         if (this.isNew()) {
             this.set('created', Date.now());
         }
-    },
+    }
 
-    toggle: function () {
+    toggle() {
         return this.set('completed', !this.isCompleted());
-    },
+    }
 
-    isCompleted: function () {
+    isCompleted() {
         return this.get('completed');
-    },
+    }
 
-    matchesFilter: function (filter) {
+    matchesFilter(filter) {
         if (filter === 'all') {
             return true;
         }
@@ -37,26 +36,24 @@ export const Todo = Backbone.Model.extend({
 
         return this.isCompleted();
     }
-});
+}
 
-	// Todo Collection
-	// ---------------
-export const TodoList = Backbone.Collection.extend({
-    model: Todo,
+// Todo Collection
+// ---------------
+@model(Todo)
+@localStorage('todos-backbone-marionette')
+@comparator('created')
+export class TodoList extends  Backbone.Collection {
 
-    localStorage: new Backbone.LocalStorage('todos-backbone-marionette'),
-
-    comparator: 'created',
-
-    getCompleted: function () {
+    getCompleted() {
         return this.filter(this._isCompleted);
-    },
+    }
 
-    getActive: function () {
+    getActive() {
         return this.reject(this._isCompleted);
-    },
+    }
 
-    _isCompleted: function (todo) {
+    _isCompleted(todo) {
         return todo.isCompleted();
     }
-});
+}

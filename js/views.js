@@ -1,59 +1,51 @@
 import Marionette from 'backbone.marionette';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import {on, template, tagName, ui, 
+        onModel, useSuper, onCollection,
+        childView, childViewContainer} from 'backbone-decorators';
 
 let filterChannel = Radio.channel('filter');
 
-// Todo List Item View
-// -------------------
-//
-// Display an individual todo item, and respond to changes
-// that are made to the item, including marking completed.
-export const TodoView = Marionette.ItemView.extend({
+// Individual Todo View
+@ui({
+    edit: '.edit',
+    destroy: '.destroy',
+    label: 'label',
+    toggle: '.toggle'
+})
+@template('#template-todoItemView')
+@tagName('li')
+export class TodoView extends Marionette.ItemView {
 
-    tagName: 'li',
-
-    template: '#template-todoItemView',
-
-    className: function () {
+    className() {
         return this.model.get('completed') ? 'completed' : 'active';
-    },
+    }
 
-    ui: {
-        edit: '.edit',
-        destroy: '.destroy',
-        label: 'label',
-        toggle: '.toggle'
-    },
+    @useSuper
+    @onModel('change')
+    render(){}
 
-    events: {
-        'click @ui.destroy': 'deleteModel',
-        'dblclick @ui.label': 'onEditClick',
-        'keydown @ui.edit': 'onEditKeypress',
-        'focusout @ui.edit': 'onEditFocusout',
-        'click @ui.toggle': 'toggle'
-    },
-
-    modelEvents: {
-        change: 'render'
-    },
-
-    deleteModel: function () {
+    @on('click @ui.destroy')
+    deleteModel() {
         this.model.destroy();
-    },
-
-    toggle: function () {
+    }
+    
+    @on('click @ui.toggle')
+    toggle() {
         this.model.toggle().save();
-    },
+    }
 
-    onEditClick: function () {
+    @on('dblclick @ui.label')
+    onEditClick() {
         this.$el.addClass('editing');
         this.ui.edit.focus();
         //move cursor to the end
         this.ui.edit.val(this.ui.edit.val());
-    },
-
-    onEditFocusout: function () {
+    }
+    
+    @on('focusout @ui.edit')
+    onEditFocusout() {
         let todoText = this.ui.edit.val().trim();
         if (todoText) {
             this.model.set('title', todoText).save();
@@ -61,9 +53,10 @@ export const TodoView = Marionette.ItemView.extend({
         } else {
             this.destroy();
         }
-    },
-
-    onEditKeypress: function (e) {
+    }
+    
+    @on('keydown @ui.edit')
+    onEditKeypress(e) {
         const ENTER_KEY = 13;
         const ESC_KEY = 27;
 
@@ -77,44 +70,31 @@ export const TodoView = Marionette.ItemView.extend({
             this.$el.removeClass('editing');
         }
     }
-});
+}
 
-// Item List View
-// --------------
-//
-// Controls the rendering of the list of items, including the
-// filtering of activs vs completed items for display.
-export const ListView = Backbone.Marionette.CompositeView.extend({
+// Todo List View
+@ui('toggle', '#toggle-all')
+@template('#template-todoListCompositeView')
+@childView(TodoView)
+@childViewContainer('#todo-list')
+export class ListView  extends Marionette.CompositeView {
 
-    template: '#template-todoListCompositeView',
 
-    childView: TodoView,
-
-    childViewContainer: '#todo-list',
-
-    ui: {
-        toggle: '#toggle-all'
-    },
-
-    events: {
-        'click @ui.toggle': 'onToggleAllClick'
-    },
-
-    collectionEvents: {
-        'change:completed': 'render',
-        all: 'setCheckAllState'
-    },
-
-    initialize: function () {
+    initialize() {
         this.listenTo(filterChannel.request('filterState'), 'change:filter', this.render, this);
-    },
+    }
+    
+    @onCollection('change:completed')
+    @useSuper
+    render() {}
 
-    filter: function (child) {
+    filter(child) {
         let filteredOn = filterChannel.request('filterState').get('filter');
         return child.matchesFilter(filteredOn);
-    },
-
-    setCheckAllState: function () {
+    }
+    
+    @onCollection('all')
+    setCheckAllState() {
         function reduceCompleted(left, right) {
             return left && right.get('completed');
         }
@@ -122,45 +102,37 @@ export const ListView = Backbone.Marionette.CompositeView.extend({
         let allCompleted = this.collection.reduce(reduceCompleted, true);
         this.ui.toggle.prop('checked', allCompleted);
         this.$el.parent().toggle(!!this.collection.length);
-    },
-
-    onToggleAllClick: function (e) {
+    }
+    
+    @on('click @ui.toggle')
+    onToggleAllClick(e) {
         let isChecked = e.currentTarget.checked;
 
         this.collection.each(function (todo) {
             todo.save({ completed: isChecked });
         });
     }
-});
+}
 
 // Layout Header View
-// ------------------
 //
-export const Header = Marionette.ItemView.extend({
-    template: '#template-header',
-
-    // UI bindings create cached attributes that
-    // point to jQuery selected objects
-    ui: {
-        input: '#new-todo'
-    },
-
-    events: {
-        'keypress @ui.input': 'onInputKeypress',
-        'keyup @ui.input': 'onInputKeyup'
-    },
+@template('#template-header')
+@ui('input', '#new-todo')
+export class Header extends Marionette.ItemView {
 
     // According to the spec
     // If escape is pressed during the edit, the edit state should be left and any changes be discarded.
-    onInputKeyup: function (e) {
+    @on('keypress @ui.input')
+    onInputKeyup(e) {
         const ESC_KEY = 27;
 
         if (e.which === ESC_KEY) {
             this.render();
         }
-    },
+    }
 
-    onInputKeypress: function (e) {
+    @on('keyup @ui.input')
+    onInputKeypress(e) {
         const ENTER_KEY = 13;
         let todoText = this.ui.input.val().trim();
 
@@ -171,33 +143,22 @@ export const Header = Marionette.ItemView.extend({
             this.ui.input.val('');
         }
     }
-});
+}
 
-	// Layout Footer View
-	// ------------------
-export const Footer = Marionette.ItemView.extend({
-    template: '#template-footer',
+// Layout Footer View
+@template('#template-footer')
+@ui({
+    filters: '#filters a',
+    completed: '.completed a',
+    active: '.active a',
+    all: '.all a',
+    summary: '#todo-count',
+    clear: '#clear-completed'
+})
+export class Footer extends Marionette.ItemView {
 
-    // UI bindings create cached attributes that
-    // point to jQuery selected objects
-    ui: {
-        filters: '#filters a',
-        completed: '.completed a',
-        active: '.active a',
-        all: '.all a',
-        summary: '#todo-count',
-        clear: '#clear-completed'
-    },
 
-    events: {
-        'click @ui.clear': 'onClearClick'
-    },
-
-    collectionEvents: {
-        all: 'render'
-    },
-
-    templateHelpers: function() {
+    templateHelpers() {
         let active = this.collection.getActive().length;
         let total = this.collection.length;
         return { 
@@ -208,26 +169,31 @@ export const Footer = Marionette.ItemView.extend({
             totalCount: total,
             completedCount: total - active
         }
-    },
+    }
 
-    initialize: function () {
+    initialize() {
         this.listenTo(filterChannel.request('filterState'), 'change:filter', this.updateFilterSelection, this);
-    },
+    }
 
-    onRender: function () {
+    @useSuper
+    @onCollection('all')
+    render() {}
+
+    onRender() {
         this.$el.parent().toggle(this.collection.length > 0);
         this.updateFilterSelection();
-    },
+    }
 
-    updateFilterSelection: function () {
+    updateFilterSelection() {
         this.ui.filters.removeClass('selected');
         this.ui[filterChannel.request('filterState').get('filter')].addClass('selected');
-    },
+    }
 
-    onClearClick: function () {
+    @on('click @ui.clear')
+    onClearClick() {
         let completed = this.collection.getCompleted();
         completed.forEach(function (todo) {
             todo.destroy();
         });
     }
-});
+}

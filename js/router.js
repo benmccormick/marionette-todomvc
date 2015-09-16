@@ -1,17 +1,15 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import {route} from 'backbone-decorators';
 
 let filterChannel = Radio.channel('filter');
 
-export const Router = Backbone.Router.extend({
-
-    routes: {
-        '*filter': 'filterItems'
-    },
+export class Router extends Backbone.Router {
 
     // Set the filter to show complete or all items
-    filterItems: function (filter) {
+    @route('*filter')
+    filterItems(filter) {
         let newFilter = filter && filter.trim() || 'all';
         filterChannel.request('filterState').set('filter', newFilter);
     }
-});
+}

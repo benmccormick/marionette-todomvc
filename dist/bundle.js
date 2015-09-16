@@ -52,11 +52,11 @@
 
 	var _application2 = _interopRequireDefault(_application);
 
-	var _router = __webpack_require__(10);
+	var _router = __webpack_require__(8);
 
 	var _todos = __webpack_require__(11);
 
-	var _layout = __webpack_require__(8);
+	var _layout = __webpack_require__(12);
 
 	var _backbone = __webpack_require__(3);
 
@@ -66,7 +66,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	__webpack_require__(14);
+	__webpack_require__(15);
 
 	_backbone2['default'].$ = _jquery2['default'];
 
@@ -18068,57 +18068,52 @@
 	    value: true
 	});
 
+	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _backboneMarionette = __webpack_require__(2);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _backbone = __webpack_require__(3);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
 
 	var _backboneRadio = __webpack_require__(9);
 
 	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
 
-	var _views = __webpack_require__(13);
+	var _backboneDecorators = __webpack_require__(14);
 
 	var filterChannel = _backboneRadio2['default'].channel('filter');
 
-	var Root = _backboneMarionette2['default'].LayoutView.extend({
+	var Router = (function (_Backbone$Router) {
+	    _inherits(Router, _Backbone$Router);
 
-	    el: '#todoapp',
+	    function Router() {
+	        _classCallCheck(this, Router);
 
-	    regions: {
-	        header: '#header',
-	        main: '#main',
-	        footer: '#footer'
-	    },
-
-	    initialize: function initialize() {
-	        this.showHeader();
-	        this.showFooter();
-	        this.showTodoList();
-	    },
-
-	    showHeader: function showHeader() {
-	        var header = new _views.Header({
-	            collection: this.collection
-	        });
-	        this.showChildView('header', header);
-	    },
-
-	    showFooter: function showFooter() {
-	        var footer = new _views.Footer({
-	            collection: this.collection
-	        });
-	        this.showChildView('footer', footer);
-	    },
-
-	    showTodoList: function showTodoList() {
-	        this.showChildView('main', new _views.ListView({
-	            collection: this.collection
-	        }));
+	        _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).apply(this, arguments);
 	    }
-	});
-	exports.Root = Root;
+
+	    _createDecoratedClass(Router, [{
+	        key: 'filterItems',
+	        decorators: [(0, _backboneDecorators.route)('*filter')],
+	        value: function filterItems(filter) {
+	            var newFilter = filter && filter.trim() || 'all';
+	            filterChannel.request('filterState').set('filter', newFilter);
+	        }
+	    }]);
+
+	    return Router;
+	})(_backbone2['default'].Router);
+
+	exports.Router = Router;
+
+	// Set the filter to show complete or all items
 
 /***/ },
 /* 9 */
@@ -18462,42 +18457,7 @@
 	//# sourceMappingURL=./backbone.radio.js.map
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _backbone = __webpack_require__(3);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _backboneRadio = __webpack_require__(9);
-
-	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
-
-	var filterChannel = _backboneRadio2['default'].channel('filter');
-
-	var Router = _backbone2['default'].Router.extend({
-
-	    routes: {
-	        '*filter': 'filterItems'
-	    },
-
-	    // Set the filter to show complete or all items
-	    filterItems: function filterItems(filter) {
-	        var newFilter = filter && filter.trim() || 'all';
-	        filterChannel.request('filterState').set('filter', newFilter);
-	    }
-	});
-	exports.Router = Router;
-
-/***/ },
+/* 10 */,
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -18507,80 +18467,907 @@
 	    value: true
 	});
 
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var _backbone = __webpack_require__(3);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	var _backboneLocalstorage = __webpack_require__(12);
+	var _backboneLocalstorage = __webpack_require__(17);
 
 	var _backboneLocalstorage2 = _interopRequireDefault(_backboneLocalstorage);
 
-	_backbone2['default'].LocalStorage = _backboneLocalstorage2['default'];
+	var _backboneDecorators = __webpack_require__(14);
 
 	// Todo Model
 	// ----------
-	var Todo = _backbone2['default'].Model.extend({
-	    defaults: {
+
+	var Todo = (function (_Backbone$Model) {
+	    _inherits(Todo, _Backbone$Model);
+
+	    function Todo() {
+	        _classCallCheck(this, _Todo);
+
+	        _get(Object.getPrototypeOf(_Todo.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    // Todo Collection
+	    // ---------------
+
+	    _createClass(Todo, [{
+	        key: 'initialize',
+	        value: function initialize() {
+	            if (this.isNew()) {
+	                this.set('created', Date.now());
+	            }
+	        }
+	    }, {
+	        key: 'toggle',
+	        value: function toggle() {
+	            return this.set('completed', !this.isCompleted());
+	        }
+	    }, {
+	        key: 'isCompleted',
+	        value: function isCompleted() {
+	            return this.get('completed');
+	        }
+	    }, {
+	        key: 'matchesFilter',
+	        value: function matchesFilter(filter) {
+	            if (filter === 'all') {
+	                return true;
+	            }
+
+	            if (filter === 'active') {
+	                return !this.isCompleted();
+	            }
+
+	            return this.isCompleted();
+	        }
+	    }]);
+
+	    var _Todo = Todo;
+	    Todo = (0, _backboneDecorators.defaults)({
 	        title: '',
 	        completed: false,
 	        created: 0
-	    },
-
-	    initialize: function initialize() {
-	        if (this.isNew()) {
-	            this.set('created', Date.now());
-	        }
-	    },
-
-	    toggle: function toggle() {
-	        return this.set('completed', !this.isCompleted());
-	    },
-
-	    isCompleted: function isCompleted() {
-	        return this.get('completed');
-	    },
-
-	    matchesFilter: function matchesFilter(filter) {
-	        if (filter === 'all') {
-	            return true;
-	        }
-
-	        if (filter === 'active') {
-	            return !this.isCompleted();
-	        }
-
-	        return this.isCompleted();
-	    }
-	});
+	    })(Todo) || Todo;
+	    return Todo;
+	})(_backbone2['default'].Model);
 
 	exports.Todo = Todo;
-	// Todo Collection
-	// ---------------
-	var TodoList = _backbone2['default'].Collection.extend({
-	    model: Todo,
 
-	    localStorage: new _backbone2['default'].LocalStorage('todos-backbone-marionette'),
+	var TodoList = (function (_Backbone$Collection) {
+	    _inherits(TodoList, _Backbone$Collection);
 
-	    comparator: 'created',
+	    function TodoList() {
+	        _classCallCheck(this, _TodoList);
 
-	    getCompleted: function getCompleted() {
-	        return this.filter(this._isCompleted);
-	    },
-
-	    getActive: function getActive() {
-	        return this.reject(this._isCompleted);
-	    },
-
-	    _isCompleted: function _isCompleted(todo) {
-	        return todo.isCompleted();
+	        _get(Object.getPrototypeOf(_TodoList.prototype), 'constructor', this).apply(this, arguments);
 	    }
-	});
+
+	    _createClass(TodoList, [{
+	        key: 'getCompleted',
+	        value: function getCompleted() {
+	            return this.filter(this._isCompleted);
+	        }
+	    }, {
+	        key: 'getActive',
+	        value: function getActive() {
+	            return this.reject(this._isCompleted);
+	        }
+	    }, {
+	        key: '_isCompleted',
+	        value: function _isCompleted(todo) {
+	            return todo.isCompleted();
+	        }
+	    }]);
+
+	    var _TodoList = TodoList;
+	    TodoList = (0, _backboneDecorators.comparator)('created')(TodoList) || TodoList;
+	    TodoList = (0, _backboneDecorators.localStorage)('todos-backbone-marionette')(TodoList) || TodoList;
+	    TodoList = (0, _backboneDecorators.model)(Todo)(TodoList) || TodoList;
+	    return TodoList;
+	})(_backbone2['default'].Collection);
+
 	exports.TodoList = TodoList;
 
 /***/ },
 /* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _backboneMarionette = __webpack_require__(2);
+
+	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
+
+	var _backboneRadio = __webpack_require__(9);
+
+	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
+
+	var _views = __webpack_require__(13);
+
+	var filterChannel = _backboneRadio2['default'].channel('filter');
+
+	var Root = _backboneMarionette2['default'].LayoutView.extend({
+
+	    el: '#todoapp',
+
+	    regions: {
+	        header: '#header',
+	        main: '#main',
+	        footer: '#footer'
+	    },
+
+	    initialize: function initialize() {
+	        this.showHeader();
+	        this.showFooter();
+	        this.showTodoList();
+	    },
+
+	    showHeader: function showHeader() {
+	        var header = new _views.Header({
+	            collection: this.collection
+	        });
+	        this.showChildView('header', header);
+	    },
+
+	    showFooter: function showFooter() {
+	        var footer = new _views.Footer({
+	            collection: this.collection
+	        });
+	        this.showChildView('footer', footer);
+	    },
+
+	    showTodoList: function showTodoList() {
+	        this.showChildView('main', new _views.ListView({
+	            collection: this.collection
+	        }));
+	    }
+	});
+	exports.Root = Root;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _backboneMarionette = __webpack_require__(2);
+
+	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
+
+	var _backbone = __webpack_require__(3);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _backboneRadio = __webpack_require__(9);
+
+	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
+
+	var _backboneDecorators = __webpack_require__(14);
+
+	var filterChannel = _backboneRadio2['default'].channel('filter');
+
+	// Individual Todo View
+
+	var TodoView = (function (_Marionette$ItemView) {
+	    _inherits(TodoView, _Marionette$ItemView);
+
+	    function TodoView() {
+	        _classCallCheck(this, _TodoView);
+
+	        _get(Object.getPrototypeOf(_TodoView.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    // Todo List View
+
+	    _createDecoratedClass(TodoView, [{
+	        key: 'className',
+	        value: function className() {
+	            return this.model.get('completed') ? 'completed' : 'active';
+	        }
+	    }, {
+	        key: 'render',
+	        decorators: [(0, _backboneDecorators.onModel)('change'), _backboneDecorators.useSuper],
+	        value: function render() {}
+	    }, {
+	        key: 'deleteModel',
+	        decorators: [(0, _backboneDecorators.on)('click @ui.destroy')],
+	        value: function deleteModel() {
+	            this.model.destroy();
+	        }
+	    }, {
+	        key: 'toggle',
+	        decorators: [(0, _backboneDecorators.on)('click @ui.toggle')],
+	        value: function toggle() {
+	            this.model.toggle().save();
+	        }
+	    }, {
+	        key: 'onEditClick',
+	        decorators: [(0, _backboneDecorators.on)('dblclick @ui.label')],
+	        value: function onEditClick() {
+	            this.$el.addClass('editing');
+	            this.ui.edit.focus();
+	            //move cursor to the end
+	            this.ui.edit.val(this.ui.edit.val());
+	        }
+	    }, {
+	        key: 'onEditFocusout',
+	        decorators: [(0, _backboneDecorators.on)('focusout @ui.edit')],
+	        value: function onEditFocusout() {
+	            var todoText = this.ui.edit.val().trim();
+	            if (todoText) {
+	                this.model.set('title', todoText).save();
+	                this.$el.removeClass('editing');
+	            } else {
+	                this.destroy();
+	            }
+	        }
+	    }, {
+	        key: 'onEditKeypress',
+	        decorators: [(0, _backboneDecorators.on)('keydown @ui.edit')],
+	        value: function onEditKeypress(e) {
+	            var ENTER_KEY = 13;
+	            var ESC_KEY = 27;
+
+	            if (e.which === ENTER_KEY) {
+	                this.onEditFocusout();
+	                return;
+	            }
+
+	            if (e.which === ESC_KEY) {
+	                this.ui.edit.val(this.model.get('title'));
+	                this.$el.removeClass('editing');
+	            }
+	        }
+	    }]);
+
+	    var _TodoView = TodoView;
+	    TodoView = (0, _backboneDecorators.tagName)('li')(TodoView) || TodoView;
+	    TodoView = (0, _backboneDecorators.template)('#template-todoItemView')(TodoView) || TodoView;
+	    TodoView = (0, _backboneDecorators.ui)({
+	        edit: '.edit',
+	        destroy: '.destroy',
+	        label: 'label',
+	        toggle: '.toggle'
+	    })(TodoView) || TodoView;
+	    return TodoView;
+	})(_backboneMarionette2['default'].ItemView);
+
+	exports.TodoView = TodoView;
+
+	var ListView = (function (_Marionette$CompositeView) {
+	    _inherits(ListView, _Marionette$CompositeView);
+
+	    function ListView() {
+	        _classCallCheck(this, _ListView);
+
+	        _get(Object.getPrototypeOf(_ListView.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    // Layout Header View
+	    //
+
+	    _createDecoratedClass(ListView, [{
+	        key: 'initialize',
+	        value: function initialize() {
+	            this.listenTo(filterChannel.request('filterState'), 'change:filter', this.render, this);
+	        }
+	    }, {
+	        key: 'render',
+	        decorators: [_backboneDecorators.useSuper, (0, _backboneDecorators.onCollection)('change:completed')],
+	        value: function render() {}
+	    }, {
+	        key: 'filter',
+	        value: function filter(child) {
+	            var filteredOn = filterChannel.request('filterState').get('filter');
+	            return child.matchesFilter(filteredOn);
+	        }
+	    }, {
+	        key: 'setCheckAllState',
+	        decorators: [(0, _backboneDecorators.onCollection)('all')],
+	        value: function setCheckAllState() {
+	            function reduceCompleted(left, right) {
+	                return left && right.get('completed');
+	            }
+
+	            var allCompleted = this.collection.reduce(reduceCompleted, true);
+	            this.ui.toggle.prop('checked', allCompleted);
+	            this.$el.parent().toggle(!!this.collection.length);
+	        }
+	    }, {
+	        key: 'onToggleAllClick',
+	        decorators: [(0, _backboneDecorators.on)('click @ui.toggle')],
+	        value: function onToggleAllClick(e) {
+	            var isChecked = e.currentTarget.checked;
+
+	            this.collection.each(function (todo) {
+	                todo.save({ completed: isChecked });
+	            });
+	        }
+	    }]);
+
+	    var _ListView = ListView;
+	    ListView = (0, _backboneDecorators.childViewContainer)('#todo-list')(ListView) || ListView;
+	    ListView = (0, _backboneDecorators.childView)(TodoView)(ListView) || ListView;
+	    ListView = (0, _backboneDecorators.template)('#template-todoListCompositeView')(ListView) || ListView;
+	    ListView = (0, _backboneDecorators.ui)('toggle', '#toggle-all')(ListView) || ListView;
+	    return ListView;
+	})(_backboneMarionette2['default'].CompositeView);
+
+	exports.ListView = ListView;
+
+	var Header = (function (_Marionette$ItemView2) {
+	    _inherits(Header, _Marionette$ItemView2);
+
+	    function Header() {
+	        _classCallCheck(this, _Header);
+
+	        _get(Object.getPrototypeOf(_Header.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    // Layout Footer View
+
+	    _createDecoratedClass(Header, [{
+	        key: 'onInputKeyup',
+	        decorators: [(0, _backboneDecorators.on)('keypress @ui.input')],
+	        value: function onInputKeyup(e) {
+	            var ESC_KEY = 27;
+
+	            if (e.which === ESC_KEY) {
+	                this.render();
+	            }
+	        }
+	    }, {
+	        key: 'onInputKeypress',
+	        decorators: [(0, _backboneDecorators.on)('keyup @ui.input')],
+	        value: function onInputKeypress(e) {
+	            var ENTER_KEY = 13;
+	            var todoText = this.ui.input.val().trim();
+
+	            if (e.which === ENTER_KEY && todoText) {
+	                this.collection.create({
+	                    title: todoText
+	                });
+	                this.ui.input.val('');
+	            }
+	        }
+	    }]);
+
+	    var _Header = Header;
+	    Header = (0, _backboneDecorators.ui)('input', '#new-todo')(Header) || Header;
+	    Header = (0, _backboneDecorators.template)('#template-header')(Header) || Header;
+	    return Header;
+	})(_backboneMarionette2['default'].ItemView);
+
+	exports.Header = Header;
+
+	var Footer = (function (_Marionette$ItemView3) {
+	    _inherits(Footer, _Marionette$ItemView3);
+
+	    function Footer() {
+	        _classCallCheck(this, _Footer);
+
+	        _get(Object.getPrototypeOf(_Footer.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    _createDecoratedClass(Footer, [{
+	        key: 'templateHelpers',
+	        value: function templateHelpers() {
+	            var active = this.collection.getActive().length;
+	            var total = this.collection.length;
+	            return {
+	                activeCountLabel: function activeCountLabel() {
+	                    return (this.activeCount === 1 ? 'item' : 'items') + ' left';
+	                },
+	                activeCount: active,
+	                totalCount: total,
+	                completedCount: total - active
+	            };
+	        }
+	    }, {
+	        key: 'initialize',
+	        value: function initialize() {
+	            this.listenTo(filterChannel.request('filterState'), 'change:filter', this.updateFilterSelection, this);
+	        }
+	    }, {
+	        key: 'render',
+	        decorators: [(0, _backboneDecorators.onCollection)('all'), _backboneDecorators.useSuper],
+	        value: function render() {}
+	    }, {
+	        key: 'onRender',
+	        value: function onRender() {
+	            this.$el.parent().toggle(this.collection.length > 0);
+	            this.updateFilterSelection();
+	        }
+	    }, {
+	        key: 'updateFilterSelection',
+	        value: function updateFilterSelection() {
+	            this.ui.filters.removeClass('selected');
+	            this.ui[filterChannel.request('filterState').get('filter')].addClass('selected');
+	        }
+	    }, {
+	        key: 'onClearClick',
+	        decorators: [(0, _backboneDecorators.on)('click @ui.clear')],
+	        value: function onClearClick() {
+	            var completed = this.collection.getCompleted();
+	            completed.forEach(function (todo) {
+	                todo.destroy();
+	            });
+	        }
+	    }]);
+
+	    var _Footer = Footer;
+	    Footer = (0, _backboneDecorators.ui)({
+	        filters: '#filters a',
+	        completed: '.completed a',
+	        active: '.active a',
+	        all: '.all a',
+	        summary: '#todo-count',
+	        clear: '#clear-completed'
+	    })(Footer) || Footer;
+	    Footer = (0, _backboneDecorators.template)('#template-footer')(Footer) || Footer;
+	    return Footer;
+	})(_backboneMarionette2['default'].ItemView);
+
+	exports.Footer = Footer;
+
+	// According to the spec
+	// If escape is pressed during the edit, the edit state should be left and any changes be discarded.
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function (global, factory) {
+	     true ? factory(exports, __webpack_require__(4), __webpack_require__(3)) : typeof define === 'function' && define.amd ? define(['exports', 'underscore', 'backbone'], factory) : factory(global.Decorators = {}, global._, global.Backbone);
+	})(this, function (exports, _, Backbone) {
+	    'use strict';
+
+	    _ = 'default' in _ ? _['default'] : _;
+	    Backbone = 'default' in Backbone ? Backbone['default'] : Backbone;
+
+	    /* Ideally we'd want to just pass these exports through directly
+	     * but Babel complains about nesting exports, so we attach them
+	     * to a namespace
+	     */
+
+	    // Backbone Decorators
+
+	    // Views
+
+	    function on(eventName) {
+	        return function (target, name, descriptor) {
+	            if (!target.events) {
+	                target.events = {};
+	            }
+	            if (_.isFunction(target.events)) {
+	                throw new Error('The on decorator is not compatible with an events method');
+	                return;
+	            }
+	            if (!eventName) {
+	                throw new Error('The on decorator requires an eventName argument');
+	            }
+	            target.events[eventName] = name;
+	            return descriptor;
+	        };
+	    }
+
+	    function tagName(value) {
+	        return function decorator(target) {
+	            target.prototype.tagName = value;
+	        };
+	    }
+
+	    //Collections
+
+	    function model(modelClass) {
+	        return function decorator(target) {
+	            if (modelClass.prototype instanceof Backbone.Model) {
+	                target.prototype.model = modelClass;
+	            } else {
+	                throw new Error('The model decorator takes either a single argument that should be an instance of Backbone.Model');
+	            }
+	        };
+	    }
+
+	    function comparator(comparatorString) {
+	        return function decorator(target) {
+	            if (_.isString(comparatorString)) {
+	                target.prototype.comparator = comparatorString;
+	            } else {
+	                throw new Error('The comparator decorator takes either a single argument that should be a string');
+	            }
+	        };
+	    }
+
+	    //Models
+
+	    function defaults() {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return function decorator(target) {
+	            var defaults = target.prototype.defaults || {};
+	            var key = args[0];
+	            var value = args[1];
+
+	            if (_.isObject(key)) {
+	                _.extend(defaults, key);
+	            } else if (_.isString(key) && !_.isUndefined(value)) {
+	                defaults[key] = value;
+	            } else {
+	                throw new Error('The defaults decorator takes either a single object as an argument or a key and value');
+	            }
+	            target.prototype.defaults = defaults;
+	        };
+	    }
+
+	    //Router
+
+	    function route(routeName) {
+	        return function (target, name, descriptor) {
+	            if (!target.routes) {
+	                target.routes = {};
+	            }
+	            if (_.isFunction(target.routes)) {
+	                throw new Error('The route decorator is not compatible with a route method');
+	                return;
+	            }
+	            if (!routeName) {
+	                throw new Error('The route decorator requires an route string argument');
+	            }
+	            target.routes[routeName] = name;
+	            return descriptor;
+	        };
+	    }
+
+	    // Marionette Decorators
+
+	    // Views
+
+	    function onModel(eventName) {
+	        return function (target, name, descriptor) {
+	            if (!target.modelEvents) {
+	                target.modelEvents = {};
+	            }
+	            if (_.isFunction(target.modelEvents)) {
+	                throw new Error('The onModel decorator is not compatible with a modelEvents method');
+	                return;
+	            }
+	            if (!eventName) {
+	                throw new Error('The onModel decorator requires an eventName argument');
+	            }
+	            target.modelEvents[eventName] = name;
+	            return descriptor;
+	        };
+	    }
+
+	    function onCollection(eventName) {
+	        return function (target, name, descriptor) {
+	            if (!target.collectionEvents) {
+	                target.collectionEvents = {};
+	            }
+	            if (_.isFunction(target.collectionEvents)) {
+	                throw new Error('The onCollection decorator is not compatible with a collectionEvents method');
+	                return;
+	            }
+	            if (!eventName) {
+	                throw new Error('The onCollection decorator requires an eventName argument');
+	            }
+	            target.collectionEvents[eventName] = name;
+	            return descriptor;
+	        };
+	    }
+
+	    function template(value) {
+	        return function decorator(target) {
+	            target.prototype.template = value;
+	        };
+	    }
+
+	    function childView(value) {
+	        return function decorator(target) {
+	            target.prototype.childView = value;
+	        };
+	    }
+
+	    function childViewContainer(value) {
+	        return function decorator(target) {
+	            target.prototype.childViewContainer = value;
+	        };
+	    }
+
+	    function ui() {
+	        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	            args[_key2] = arguments[_key2];
+	        }
+
+	        return function decorator(target) {
+	            var ui = target.prototype.ui || {};
+	            var key = args[0];
+	            var value = args[1];
+
+	            if (_.isObject(key)) {
+	                _.extend(ui, args[0]);
+	            } else if (_.isString(key) && _.isString(value)) {
+	                ui[key] = value;
+	            } else {
+	                throw new Error('The ui decorator takes either a single object as an argument or a key and value string');
+	            }
+	            target.prototype.ui = ui;
+	        };
+	    }
+
+	    // Utility Decorators
+
+	    function useSuper(target, name, descriptor) {
+	        var superMethod = Object.getPrototypeOf(target)[name];
+	        if (_.isFunction(superMethod)) {
+	            descriptor.value = function () {
+	                for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	                    args[_key3] = arguments[_key3];
+	                }
+
+	                superMethod.apply(this, args);
+	            };
+	        } else {
+	            throw new Error('The useSuper method requires the parent class to implement this function somewhere on its prototype chain');
+	        }
+	        return descriptor;
+	    }
+
+	    //Backbone.LocalStorage Decorators
+
+	    function localStorage(storageKey) {
+	        return function decorator(target) {
+	            if (Backbone.LocalStorage) {
+	                if (_.isString(storageKey)) {
+	                    target.prototype.localStorage = new Backbone.LocalStorage(storageKey);
+	                } else {
+	                    throw new Error('The localStorage decorator requires a single string argument which will serve as the localStorage key');
+	                }
+	            } else {
+	                throw new Error('The localStorage decorator requires Backbone.LocalStorage to have been loaded before use');
+	            }
+	        };
+	    }
+
+	    //Marionette-service Decorators
+
+	    function replyRadio(channel, requestString) {
+	        return function (target, name, descriptor) {
+	            if (!target.radioRequests) {
+	                target.radioRequests = {};
+	            }
+	            if (_.isFunction(target.radioRequests)) {
+	                throw new Error('The replyRadio decorator is not compatible with a radioRequests method');
+	                return;
+	            }
+	            if (!_.isString(channel) || !_.isString(requestString)) {
+	                throw new Error('The replyRadio decorator requires 2 arguments, a channel and a request string.');
+	            }
+	            target.radioRequests[channel + ' ' + requestString] = name;
+	            return descriptor;
+	        };
+	    }
+
+	    exports.on = on;
+	    exports.tagName = tagName;
+	    exports.model = model;
+	    exports.comparator = comparator;
+	    exports.defaults = defaults;
+	    exports.route = route;
+	    exports.onModel = onModel;
+	    exports.onCollection = onCollection;
+	    exports.template = template;
+	    exports.childView = childView;
+	    exports.childViewContainer = childViewContainer;
+	    exports.ui = ui;
+	    exports.useSuper = useSuper;
+	    exports.localStorage = localStorage;
+	    exports.replyRadio = replyRadio;
+	});
+	//# sourceMappingURL=backbone-decorators.js.map
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _marionetteService = __webpack_require__(16);
+
+	var _marionetteService2 = _interopRequireDefault(_marionetteService);
+
+	var _backbone = __webpack_require__(3);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _backboneDecorators = __webpack_require__(14);
+
+	/* 
+	 * This is a simple service that maintains the 
+	 * state of the filter, and passes it on
+	 * to any other parts of the code that request it
+	 * This currently uses Marionette-service for its service
+	 * object, in Mn 3.0 this will be replaceable with
+	 * Marionette.Object without any external dependencies
+	 */
+
+	var FilterService = (function (_Service) {
+	    _inherits(FilterService, _Service);
+
+	    function FilterService() {
+	        _classCallCheck(this, FilterService);
+
+	        _get(Object.getPrototypeOf(FilterService.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    // We create the service as a singleton
+
+	    _createDecoratedClass(FilterService, [{
+	        key: 'initialize',
+	        value: function initialize() {
+	            this.filterState = new _backbone2['default'].Model({
+	                filter: 'all'
+	            });
+	        }
+	    }, {
+	        key: 'getFilterState',
+	        decorators: [(0, _backboneDecorators.replyRadio)('filter', 'filterState')],
+	        value: function getFilterState() {
+	            return this.filterState;
+	        }
+	    }]);
+
+	    return FilterService;
+	})(_marionetteService2['default']);
+
+	var service = new FilterService();
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Marionette Service
+	 *
+	 * Adds a Service Object to Marionette which allows an Object to
+	 * receive Backbone.Radio messages in a declarative fashion.
+	 *
+	 * @author Ben McCormick
+	 *
+	 */
+	/* global define:false, require:false, module:false */
+	(function(global, factory) {
+	  'use strict';
+	  if(true) {
+	    module.exports = factory(__webpack_require__(2), __webpack_require__(9), __webpack_require__(4)); //jshint ignore:line
+	  } else if(typeof define === 'function' && define.amd) {
+	   define(['backbone.marionette', 'backbone.radio', 'underscore'], factory);
+	  } else {
+	   factory(global.Marionette, global.Backbone.Radio, global._);
+	  }
+	})(this, function (Mn, Radio, _) {
+	  //Proxy Radio message handling to enable declarative interactions with radio channels
+	  var radioAPI = {
+	      radioEvents : {
+	          startMethod: 'on',
+	          stopMethod: 'off'
+	      },
+
+	      radioRequests : {
+	          startMethod: 'reply',
+	          stopMethod: 'stopReplying'
+	      }
+	  };
+
+	  function proxyRadioHandlers() {
+	      unproxyRadioHandlers.apply(this);
+	      _.each(radioAPI, function(commands, radioType) {
+	          var hash = _.result(this, radioType);
+	          if (!hash) {
+	              return;
+	          }
+	          _.each(hash, function(handler, radioMessage) {
+	              handler = normalizeHandler.call(this, handler);
+	              if (!handler) {
+	                return;
+	              }
+	              var messageComponents = radioMessage.split(' '),
+	                channel = messageComponents[0],
+	                messageName = messageComponents[1];
+	              proxyRadioHandler.call(this,channel, radioType, messageName, handler);
+	          }, this);
+	      }, this);
+	  }
+
+	  function proxyRadioHandler(channel, radioType, messageName, handler) {
+	      var method = radioAPI[radioType].startMethod;
+	      this._radioChannels = this._radioChannels || [];
+	      if(!_.contains(this._radioChannels, channel)) {
+	          this._radioChannels.push(channel);
+	      }
+	      Radio[method](channel, messageName, handler, this);
+	  }
+
+	  function unproxyRadioHandlers() {
+	      _.each(this._radioChannels, function(channel) {
+	          _.each(radioAPI,function(commands) {
+	              Radio[commands.stopMethod](channel, null, null, this);
+	          }, this);
+	      }, this);
+	  }
+
+	  function normalizeHandler(handler) {
+	      if (!_.isFunction(handler)) {
+	          handler = this[handler];
+	      }
+	      return handler;
+	  }
+
+	  var Service = Mn.Object.extend({
+
+	      constructor: function() {
+	          Mn.Object.apply(this, [].slice.call(arguments));
+	          proxyRadioHandlers.apply(this);
+	      },
+
+	      destroy: function() {
+	          Mn.Object.prototype.destroy.apply(this);
+	          unproxyRadioHandlers.apply(this);
+	      }
+
+	  });
+	  Mn.Service = Service;
+	  return Service;
+	});
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18841,408 +19628,6 @@
 
 	return Backbone.LocalStorage;
 	}));
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _backboneMarionette = __webpack_require__(2);
-
-	var _backboneMarionette2 = _interopRequireDefault(_backboneMarionette);
-
-	var _backbone = __webpack_require__(3);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _backboneRadio = __webpack_require__(9);
-
-	var _backboneRadio2 = _interopRequireDefault(_backboneRadio);
-
-	var filterChannel = _backboneRadio2['default'].channel('filter');
-
-	// Todo List Item View
-	// -------------------
-	//
-	// Display an individual todo item, and respond to changes
-	// that are made to the item, including marking completed.
-	var TodoView = _backboneMarionette2['default'].ItemView.extend({
-
-	    tagName: 'li',
-
-	    template: '#template-todoItemView',
-
-	    className: function className() {
-	        return this.model.get('completed') ? 'completed' : 'active';
-	    },
-
-	    ui: {
-	        edit: '.edit',
-	        destroy: '.destroy',
-	        label: 'label',
-	        toggle: '.toggle'
-	    },
-
-	    events: {
-	        'click @ui.destroy': 'deleteModel',
-	        'dblclick @ui.label': 'onEditClick',
-	        'keydown @ui.edit': 'onEditKeypress',
-	        'focusout @ui.edit': 'onEditFocusout',
-	        'click @ui.toggle': 'toggle'
-	    },
-
-	    modelEvents: {
-	        change: 'render'
-	    },
-
-	    deleteModel: function deleteModel() {
-	        this.model.destroy();
-	    },
-
-	    toggle: function toggle() {
-	        this.model.toggle().save();
-	    },
-
-	    onEditClick: function onEditClick() {
-	        this.$el.addClass('editing');
-	        this.ui.edit.focus();
-	        //move cursor to the end
-	        this.ui.edit.val(this.ui.edit.val());
-	    },
-
-	    onEditFocusout: function onEditFocusout() {
-	        var todoText = this.ui.edit.val().trim();
-	        if (todoText) {
-	            this.model.set('title', todoText).save();
-	            this.$el.removeClass('editing');
-	        } else {
-	            this.destroy();
-	        }
-	    },
-
-	    onEditKeypress: function onEditKeypress(e) {
-	        var ENTER_KEY = 13;
-	        var ESC_KEY = 27;
-
-	        if (e.which === ENTER_KEY) {
-	            this.onEditFocusout();
-	            return;
-	        }
-
-	        if (e.which === ESC_KEY) {
-	            this.ui.edit.val(this.model.get('title'));
-	            this.$el.removeClass('editing');
-	        }
-	    }
-	});
-
-	exports.TodoView = TodoView;
-	// Item List View
-	// --------------
-	//
-	// Controls the rendering of the list of items, including the
-	// filtering of activs vs completed items for display.
-	var ListView = _backbone2['default'].Marionette.CompositeView.extend({
-
-	    template: '#template-todoListCompositeView',
-
-	    childView: TodoView,
-
-	    childViewContainer: '#todo-list',
-
-	    ui: {
-	        toggle: '#toggle-all'
-	    },
-
-	    events: {
-	        'click @ui.toggle': 'onToggleAllClick'
-	    },
-
-	    collectionEvents: {
-	        'change:completed': 'render',
-	        all: 'setCheckAllState'
-	    },
-
-	    initialize: function initialize() {
-	        this.listenTo(filterChannel.request('filterState'), 'change:filter', this.render, this);
-	    },
-
-	    filter: function filter(child) {
-	        var filteredOn = filterChannel.request('filterState').get('filter');
-	        return child.matchesFilter(filteredOn);
-	    },
-
-	    setCheckAllState: function setCheckAllState() {
-	        function reduceCompleted(left, right) {
-	            return left && right.get('completed');
-	        }
-
-	        var allCompleted = this.collection.reduce(reduceCompleted, true);
-	        this.ui.toggle.prop('checked', allCompleted);
-	        this.$el.parent().toggle(!!this.collection.length);
-	    },
-
-	    onToggleAllClick: function onToggleAllClick(e) {
-	        var isChecked = e.currentTarget.checked;
-
-	        this.collection.each(function (todo) {
-	            todo.save({ completed: isChecked });
-	        });
-	    }
-	});
-
-	exports.ListView = ListView;
-	// Layout Header View
-	// ------------------
-	//
-	var Header = _backboneMarionette2['default'].ItemView.extend({
-	    template: '#template-header',
-
-	    // UI bindings create cached attributes that
-	    // point to jQuery selected objects
-	    ui: {
-	        input: '#new-todo'
-	    },
-
-	    events: {
-	        'keypress @ui.input': 'onInputKeypress',
-	        'keyup @ui.input': 'onInputKeyup'
-	    },
-
-	    // According to the spec
-	    // If escape is pressed during the edit, the edit state should be left and any changes be discarded.
-	    onInputKeyup: function onInputKeyup(e) {
-	        var ESC_KEY = 27;
-
-	        if (e.which === ESC_KEY) {
-	            this.render();
-	        }
-	    },
-
-	    onInputKeypress: function onInputKeypress(e) {
-	        var ENTER_KEY = 13;
-	        var todoText = this.ui.input.val().trim();
-
-	        if (e.which === ENTER_KEY && todoText) {
-	            this.collection.create({
-	                title: todoText
-	            });
-	            this.ui.input.val('');
-	        }
-	    }
-	});
-
-	exports.Header = Header;
-	// Layout Footer View
-	// ------------------
-	var Footer = _backboneMarionette2['default'].ItemView.extend({
-	    template: '#template-footer',
-
-	    // UI bindings create cached attributes that
-	    // point to jQuery selected objects
-	    ui: {
-	        filters: '#filters a',
-	        completed: '.completed a',
-	        active: '.active a',
-	        all: '.all a',
-	        summary: '#todo-count',
-	        clear: '#clear-completed'
-	    },
-
-	    events: {
-	        'click @ui.clear': 'onClearClick'
-	    },
-
-	    collectionEvents: {
-	        all: 'render'
-	    },
-
-	    templateHelpers: function templateHelpers() {
-	        var active = this.collection.getActive().length;
-	        var total = this.collection.length;
-	        return {
-	            activeCountLabel: function activeCountLabel() {
-	                return (this.activeCount === 1 ? 'item' : 'items') + ' left';
-	            },
-	            activeCount: active,
-	            totalCount: total,
-	            completedCount: total - active
-	        };
-	    },
-
-	    initialize: function initialize() {
-	        this.listenTo(filterChannel.request('filterState'), 'change:filter', this.updateFilterSelection, this);
-	    },
-
-	    onRender: function onRender() {
-	        this.$el.parent().toggle(this.collection.length > 0);
-	        this.updateFilterSelection();
-	    },
-
-	    updateFilterSelection: function updateFilterSelection() {
-	        this.ui.filters.removeClass('selected');
-	        this.ui[filterChannel.request('filterState').get('filter')].addClass('selected');
-	    },
-
-	    onClearClick: function onClearClick() {
-	        var completed = this.collection.getCompleted();
-	        completed.forEach(function (todo) {
-	            todo.destroy();
-	        });
-	    }
-	});
-	exports.Footer = Footer;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _marionetteService = __webpack_require__(15);
-
-	var _marionetteService2 = _interopRequireDefault(_marionetteService);
-
-	var _backbone = __webpack_require__(3);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	/* 
-	 * This is a simple service that maintains the 
-	 * state of the filter, and passes it on
-	 * to any other parts of the code that request it
-	 * This currently uses Marionette-service for its service
-	 * object, in Mn 3.0 this will be replaceable with
-	 * Marionette.Object without any external dependencies
-	 */
-	var FilterService = _marionetteService2['default'].extend({
-
-	    radioRequests: {
-	        'filter filterState': 'getFilterState'
-	    },
-
-	    initialize: function initialize() {
-	        this.filterState = new _backbone2['default'].Model({
-	            filter: 'all'
-	        });
-	    },
-
-	    getFilterState: function getFilterState() {
-	        return this.filterState;
-	    }
-
-	});
-
-	// We create the service as a singleton
-	var service = new FilterService();
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Marionette Service
-	 *
-	 * Adds a Service Object to Marionette which allows an Object to
-	 * receive Backbone.Radio messages in a declarative fashion.
-	 *
-	 * @author Ben McCormick
-	 *
-	 */
-	/* global define:false, require:false, module:false */
-	(function(global, factory) {
-	  'use strict';
-	  if(true) {
-	    module.exports = factory(__webpack_require__(2), __webpack_require__(9), __webpack_require__(4)); //jshint ignore:line
-	  } else if(typeof define === 'function' && define.amd) {
-	   define(['backbone.marionette', 'backbone.radio', 'underscore'], factory);
-	  } else {
-	   factory(global.Marionette, global.Backbone.Radio, global._);
-	  }
-	})(this, function (Mn, Radio, _) {
-	  //Proxy Radio message handling to enable declarative interactions with radio channels
-	  var radioAPI = {
-	      radioEvents : {
-	          startMethod: 'on',
-	          stopMethod: 'off'
-	      },
-
-	      radioRequests : {
-	          startMethod: 'reply',
-	          stopMethod: 'stopReplying'
-	      }
-	  };
-
-	  function proxyRadioHandlers() {
-	      unproxyRadioHandlers.apply(this);
-	      _.each(radioAPI, function(commands, radioType) {
-	          var hash = _.result(this, radioType);
-	          if (!hash) {
-	              return;
-	          }
-	          _.each(hash, function(handler, radioMessage) {
-	              handler = normalizeHandler.call(this, handler);
-	              if (!handler) {
-	                return;
-	              }
-	              var messageComponents = radioMessage.split(' '),
-	                channel = messageComponents[0],
-	                messageName = messageComponents[1];
-	              proxyRadioHandler.call(this,channel, radioType, messageName, handler);
-	          }, this);
-	      }, this);
-	  }
-
-	  function proxyRadioHandler(channel, radioType, messageName, handler) {
-	      var method = radioAPI[radioType].startMethod;
-	      this._radioChannels = this._radioChannels || [];
-	      if(!_.contains(this._radioChannels, channel)) {
-	          this._radioChannels.push(channel);
-	      }
-	      Radio[method](channel, messageName, handler, this);
-	  }
-
-	  function unproxyRadioHandlers() {
-	      _.each(this._radioChannels, function(channel) {
-	          _.each(radioAPI,function(commands) {
-	              Radio[commands.stopMethod](channel, null, null, this);
-	          }, this);
-	      }, this);
-	  }
-
-	  function normalizeHandler(handler) {
-	      if (!_.isFunction(handler)) {
-	          handler = this[handler];
-	      }
-	      return handler;
-	  }
-
-	  var Service = Mn.Object.extend({
-
-	      constructor: function() {
-	          Mn.Object.apply(this, [].slice.call(arguments));
-	          proxyRadioHandlers.apply(this);
-	      },
-
-	      destroy: function() {
-	          Mn.Object.prototype.destroy.apply(this);
-	          unproxyRadioHandlers.apply(this);
-	      }
-
-	  });
-	  Mn.Service = Service;
-	  return Service;
-	});
 
 
 /***/ }

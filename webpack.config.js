@@ -6,7 +6,10 @@ module.exports = {
         loaders: [{
             test: /\.js?$/,
             exclude: /(node_modules)/,
-            loader: 'babel'
+            loader: 'babel',
+            query: {
+                stage: 1
+            }
         }]
     },   
     entry: "./js/main.js",

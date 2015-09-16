@@ -1,5 +1,6 @@
 import Service from 'marionette-service';
 import Backbone from 'backbone';
+import {replyRadio} from 'backbone-decorators';
 
 /* 
  * This is a simple service that maintains the 
@@ -9,23 +10,20 @@ import Backbone from 'backbone';
  * object, in Mn 3.0 this will be replaceable with
  * Marionette.Object without any external dependencies
  */
-const FilterService = Service.extend({
+class FilterService extends Service {
 
-    radioRequests: {
-        'filter filterState': 'getFilterState'
-    },
-
-    initialize: function() {
+    initialize() {
         this.filterState =  new Backbone.Model({
             filter: 'all'
         });
-    },
+    }
 
-    getFilterState: function() {
+    @replyRadio('filter', 'filterState')
+    getFilterState() {
         return this.filterState; 
     }
 
-});
+}
 
 // We create the service as a singleton
 const service = new FilterService();
